@@ -86,7 +86,7 @@ const Jobs = () => {
     <div>
       <Navbar />
       <div className="max-w-7xl mx-auto mt-5 px-4">
-        <div className="flex flex-col md:flex-row gap-5">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Filter Sidebar */}
           <div className="w-full lg:w-1/5">
             <FilterCard />
