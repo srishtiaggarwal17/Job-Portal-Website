@@ -1,5 +1,5 @@
 import React from "react";
-import { Facebook, Twitter, Linkedin, Mail } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Mail,Globe,Github } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -30,10 +30,10 @@ const Footer = () => {
         <div>
           <h2 className="text-lg font-semibold mb-2">Follow Us</h2>
           <div className="flex space-x-4 mt-2">
-            <a href="#" className="hover:text-blue-600"><Facebook /></a>
-            <a href="#" className="hover:text-blue-400"><Twitter /></a>
-            <a href="#" className="hover:text-blue-700"><Linkedin /></a>
-            <a href="mailto:support@jobsphere.com" className="hover:text-red-500"><Mail /></a>
+            <a href="https://srishtiaggarwal17.github.io/Portfolio/" className="hover:text-blue-600"><Globe /></a>
+            <a href="https://github.com/srishtiaggarwal17" className="hover:text-blue-400"><Github /></a>
+            <a href="https://www.linkedin.com/in/srishti-aggarwal-0255152b3/" className="hover:text-blue-700"><Linkedin /></a>
+            <a href="mailto:aggarwalsrishti881@gmail.com" className="hover:text-red-500"><Mail /></a>
           </div>
         </div>
       </div>
