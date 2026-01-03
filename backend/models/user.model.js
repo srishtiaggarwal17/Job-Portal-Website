@@ -30,7 +30,25 @@ const userSchema=new mongoose.Schema({
         resumeOriginalName:{type:String},
         company:{type:mongoose.Schema.Types.ObjectId,ref:'Company'},
         profilePhoto:{type:String,default:""}
-    }
+    },
+    emailOtp: {
+        type: String
+    },
+    otpExpiry: {
+        type: Date
+    },
+    otpResendCount: {
+        type: Number,
+        default: 0
+    },
+    otpResendBlockedUntil: {
+        type: Date,
+        default: null
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    } 
 },{timestamps:true});
 
 export const User=mongoose.model('User',userSchema);
