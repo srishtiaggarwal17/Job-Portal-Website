@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import sendEmail from "../utils/nodemailer.js";
 
 // export const register=async(req,res)=>{
 //     try{
