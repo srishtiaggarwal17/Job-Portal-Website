@@ -57,10 +57,18 @@ export const register=async(req,res)=>{
             });
         };
        
+        let profilePhotoUrl = "";
 
-        const file=req.file
-        const fileUri=getDataUri(file);
-        const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
+    if (req.file) {
+      const fileUri = getDataUri(req.file);
+      const cloudResponse = await cloudinary.uploader.upload(
+        fileUri.content
+      );
+      profilePhotoUrl = cloudResponse.secure_url;
+    }
+        // const file=req.file
+        // const fileUri=getDataUri(file);
+        // const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
         const user=await User.findOne({email}); //checks whether the user already exists or not
         if(user){
             return res.status(400).json({
@@ -83,7 +91,7 @@ export const register=async(req,res)=>{
             emailOtp: otp,
             otpExpiry,
             profile:{
-                profilePhoto:cloudResponse.secure_url,
+                profilePhoto:profilePhotoUrl,
             },
         });
 
