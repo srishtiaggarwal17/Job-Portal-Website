@@ -113,7 +113,7 @@ const VerifyOtp = () => {
       inputsRef.current[0]?.focus();
 
       // Restart timer
-      setResendTimer(30);
+      setResendTimer(60);
 
     } catch (err) {    
       if (err.response?.status === 429) {
