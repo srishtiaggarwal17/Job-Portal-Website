@@ -95,16 +95,20 @@ export const register=async(req,res)=>{
             },
         });
         
-        await sendEmail({
-            to: email,
-            subject: "Verify your email - OTP",
-            body: `
-                <h3>Hello ${fullname},</h3>
-                <p>Your email verification OTP is:</p>
-                <h2>${otp}</h2>
-                <p>This OTP is valid for 1 minute.</p>
-            `
-        });
+        try {
+            await sendEmail({
+                to: email,
+                subject: "Verify your email - OTP",
+                body: `
+                   <h3>Hello ${fullname},</h3>
+                   <p>Your email verification OTP is:</p>
+                   <h2>${otp}</h2>
+                   <p>This OTP is valid for 1 minute.</p>
+                `,
+            });
+        } catch (emailError) {
+            console.error("Email failed:", emailError.message);
+        }
 
          return res.status(201).json({
              message:"OTP sent to your email. Please verify.",
