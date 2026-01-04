@@ -94,7 +94,7 @@ export const register=async(req,res)=>{
                 profilePhoto:profilePhotoUrl,
             },
         });
-        try{
+        
         await sendEmail({
             to: email,
             subject: "Verify your email - OTP",
@@ -105,9 +105,6 @@ export const register=async(req,res)=>{
                 <p>This OTP is valid for 1 minute.</p>
             `
         });
-        }catch (emailError) {
-  console.error("Email failed:", emailError.message);
-}
 
          return res.status(201).json({
              message:"OTP sent to your email. Please verify.",
