@@ -256,13 +256,13 @@ export const login=async(req,res)=>{
                 success:false
             })
         }
-        if (!user.isVerified) {
-            return res.status(403).json({
-                message: "Please verify your email before logging in",
-                isVerified: false,
-                email: user.email
-            });
-        }
+        // if (!user.isVerified) {
+        //     return res.status(403).json({
+        //         message: "Please verify your email before logging in",
+        //         isVerified: false,
+        //         email: user.email
+        //     });
+        // }
         const isPasswordMatch=await bcrypt.compare(password,user.password);
         if(!isPasswordMatch){
             return res.status(400).json({
