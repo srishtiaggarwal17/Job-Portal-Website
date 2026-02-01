@@ -14,7 +14,6 @@ import PostJob from './components/admin/PostJob';
 import Applicants from './components/admin/Applicants';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import EditJob from './components/admin/EditJob';
-import VerifyOtp from './components/auth/VerifyOtp';
 
 const appRouter=createBrowserRouter([
   {
@@ -24,10 +23,6 @@ const appRouter=createBrowserRouter([
   {
     path:'/login',
     element:<Login/>
-  },
-  {
-    path:'/verifyOtp',
-    element:<VerifyOtp/>
   },
   {
     path:'/signup',
