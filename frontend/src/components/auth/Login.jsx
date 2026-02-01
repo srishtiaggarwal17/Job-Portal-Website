@@ -43,25 +43,8 @@ const Login=()=>{
             }
         }
         catch(error){
-            const res = error.response;
-            if (res?.status === 403 && res.data?.isVerified === false) {
-                toast.error(res.data.message);
-                try {
-                    await axios.post(
-                        `${USER_API_END_POINT}/resendOtp`,
-                        { email: res.data.email },
-                        { withCredentials: true }
-                    );
-                    toast.success("OTP sent to your email");
-                    navigate("/verifyOtp", {
-                        state: { email: res.data.email }
-                    });
-                } catch (otpErr) {
-                    toast.error("Failed to resend OTP");
-                }
-            return;
-        }
-            toast.error(res?.data?.message || "Login failed");
+            console.log(error);
+            toast.error(error.response.data.message)
         }
         finally{
             dispatch(setLoading(false));
