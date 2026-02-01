@@ -3,49 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
-import sendEmail from "../utils/nodemailer.js";
-
-// export const register=async(req,res)=>{
-//     try{
-//         const {fullname,email,phoneNumber,password,role}=req.body;
-//         if(!fullname || !email || !phoneNumber ||!password ||!role){
-//             return res.status(400).json({
-//                 message:"Something is missing.",
-//                 success:false
-//             });
-//         };
-//         const file=req.file
-//         const fileUri=getDataUri(file);
-//         const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
-//         const user=await User.findOne({email}); //checks whether the user already exists or not
-//         if(user){
-//             return res.status(400).json({
-//                 message:'User already exist with this email.',
-//                 success:false,
-//             })
-//         }
-//         const hashedPassword=await bcrypt.hash(password,10) //kitni length ka passowrd hona chahiye
-
-//         await User.create({
-//             fullname,
-//             email,
-//             phoneNumber,
-//             password:hashedPassword,
-//             role,
-//             profile:{
-//                 profilePhoto:cloudResponse.secure_url,
-//             }
-//         });
-
-//         return res.status(201).json({
-//             message:"Account created successfully.",
-//             success:true
-//         });
-//     }
-//     catch(error){
-//         console.log(error)
-//     }
-// }
+//import sendEmail from "../utils/nodemailer.js";
 
 export const register=async(req,res)=>{
     try{
@@ -56,19 +14,9 @@ export const register=async(req,res)=>{
                 success:false
             });
         };
-       
-        let profilePhotoUrl = "";
-
-    if (req.file) {
-      const fileUri = getDataUri(req.file);
-      const cloudResponse = await cloudinary.uploader.upload(
-        fileUri.content
-      );
-      profilePhotoUrl = cloudResponse.secure_url;
-    }
-        // const file=req.file
-        // const fileUri=getDataUri(file);
-        // const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
+        const file=req.file
+        const fileUri=getDataUri(file);
+        const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
         const user=await User.findOne({email}); //checks whether the user already exists or not
         if(user){
             return res.status(400).json({
@@ -76,10 +24,7 @@ export const register=async(req,res)=>{
                 success:false,
             })
         }
-
         const hashedPassword=await bcrypt.hash(password,10) //kitni length ka passowrd hona chahiye
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpiry = new Date(Date.now() + 1 * 60 * 1000); 
 
         await User.create({
             fullname,
@@ -87,156 +32,211 @@ export const register=async(req,res)=>{
             phoneNumber,
             password:hashedPassword,
             role,
-            isVerified: false,
-            emailOtp: otp,
-            otpExpiry,
             profile:{
-                profilePhoto:profilePhotoUrl,
-            },
+                profilePhoto:cloudResponse.secure_url,
+            }
         });
-        
-        try {
-            await sendEmail({
-                to: email,
-                subject: "Verify your email - OTP",
-                body: `
-                   <h3>Hello ${fullname},</h3>
-                   <p>Your email verification OTP is:</p>
-                   <h2>${otp}</h2>
-                   <p>This OTP is valid for 1 minute.</p>
-                `,
-            });
-        } catch (emailError) {
-            console.error("Email failed:", emailError.message);
-        }
 
-         return res.status(201).json({
-             message:"OTP sent to your email. Please verify.",
-             success:true
-         });
-     }
+        return res.status(201).json({
+            message:"Account created successfully.",
+            success:true
+        });
+    }
     catch(error){
         console.log(error)
-        return res.status(500).json({
-           message: "Registration failed",
-           success: false
-        });
     }
 }
 
-export const verifyOtp = async (req, res) => {
-    const { email, otp } = req.body;
-    if (!email || !otp) {
-        return res.status(400).json({ message: "OTP required" });
-    }
-    const user = await User.findOne({ email });
-    if (!user) {
-       return res.status(404).json({ message: "User not found" });
-    }
-    if (user.isVerified) {
-        return res.json({ message: "Email already verified" });
-    }
-    if (user.emailOtp !== otp) {
-        return res.status(400).json({ message: "Invalid OTP" });
-    }
-    if (user.otpExpiry < Date.now()) {
-        return res.status(400).json({ message: "OTP expired" });
-    }
-    user.isVerified = true;
-    user.emailOtp = null;
-    user.otpExpiry = null;
-    user.otpResendCount = 0;
-    user.otpResendBlockedUntil = null;
-    await user.save();
-    res.json({ message: "Email verified successfully" });
-};
+// export const register=async(req,res)=>{
+//     try{
+//         const {fullname,email,phoneNumber,password,role}=req.body;
+//         if(!fullname || !email || !phoneNumber ||!password ||!role){
+//             return res.status(400).json({
+//                 message:"Something is missing.",
+//                 success:false
+//             });
+//         };
+       
+//         let profilePhotoUrl = "";
 
-export const resendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
+//     if (req.file) {
+//       const fileUri = getDataUri(req.file);
+//       const cloudResponse = await cloudinary.uploader.upload(
+//         fileUri.content
+//       );
+//       profilePhotoUrl = cloudResponse.secure_url;
+//     }
+//         // const file=req.file
+//         // const fileUri=getDataUri(file);
+//         // const cloudResponse=await cloudinary.uploader.upload(fileUri.content);
+//         const user=await User.findOne({email}); //checks whether the user already exists or not
+//         if(user){
+//             return res.status(400).json({
+//                 message:'User already exist with this email.',
+//                 success:false,
+//             })
+//         }
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
+//         const hashedPassword=await bcrypt.hash(password,10) //kitni length ka passowrd hona chahiye
+//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//         const otpExpiry = new Date(Date.now() + 1 * 60 * 1000); 
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//         await User.create({
+//             fullname,
+//             email,
+//             phoneNumber,
+//             password:hashedPassword,
+//             role,
+//             isVerified: false,
+//             emailOtp: otp,
+//             otpExpiry,
+//             profile:{
+//                 profilePhoto:profilePhotoUrl,
+//             },
+//         });
+        
+//         try {
+//             await sendEmail({
+//                 to: email,
+//                 subject: "Verify your email - OTP",
+//                 body: `
+//                    <h3>Hello ${fullname},</h3>
+//                    <p>Your email verification OTP is:</p>
+//                    <h2>${otp}</h2>
+//                    <p>This OTP is valid for 1 minute.</p>
+//                 `,
+//             });
+//         } catch (emailError) {
+//             console.error("Email failed:", emailError.message);
+//         }
 
-    if (user.isVerified) {
-      return res.status(400).json({ message: "Email already verified" });
-    }
+//          return res.status(201).json({
+//              message:"OTP sent to your email. Please verify.",
+//              success:true
+//          });
+//      }
+//     catch(error){
+//         console.log(error)
+//         return res.status(500).json({
+//            message: "Registration failed",
+//            success: false
+//         });
+//     }
+// }
 
-    const now = new Date();
+// export const verifyOtp = async (req, res) => {
+//     const { email, otp } = req.body;
+//     if (!email || !otp) {
+//         return res.status(400).json({ message: "OTP required" });
+//     }
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//        return res.status(404).json({ message: "User not found" });
+//     }
+//     if (user.isVerified) {
+//         return res.json({ message: "Email already verified" });
+//     }
+//     if (user.emailOtp !== otp) {
+//         return res.status(400).json({ message: "Invalid OTP" });
+//     }
+//     if (user.otpExpiry < Date.now()) {
+//         return res.status(400).json({ message: "OTP expired" });
+//     }
+//     user.isVerified = true;
+//     user.emailOtp = null;
+//     user.otpExpiry = null;
+//     user.otpResendCount = 0;
+//     user.otpResendBlockedUntil = null;
+//     await user.save();
+//     res.json({ message: "Email verified successfully" });
+// };
 
-    //  CHECK IF USER IS TEMPORARILY BLOCKED
-    if (
-      user.otpResendBlockedUntil &&
-      user.otpResendBlockedUntil > now
-    ) {
-      const secondsLeft = Math.ceil(
-        (user.otpResendBlockedUntil - now) / 1000
-      );
+// export const resendOtp = async (req, res) => {
+//   try {
+//     const { email } = req.body;
 
-      return res.status(429).json({
-        message: `Too many attempts. Try again in ${secondsLeft}s`
-      });
-    }
+//     if (!email) {
+//       return res.status(400).json({ message: "Email is required" });
+//     }
 
-    //  RESET COUNTER AFTER BLOCK PERIOD
-    if (
-      user.otpResendBlockedUntil &&
-      user.otpResendBlockedUntil <= now
-    ) {
-      user.otpResendCount = 0;
-      user.otpResendBlockedUntil = null;
-    }
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    //  CHECK ATTEMPT LIMIT
-    if (user.otpResendCount >= 3) {
-      user.otpResendBlockedUntil = new Date(
-        now.getTime() + 5 * 60 * 1000 // 5 minutes
-      );
-      await user.save();
+//     if (user.isVerified) {
+//       return res.status(400).json({ message: "Email already verified" });
+//     }
 
-      return res.status(429).json({
-        message: "Too many OTP requests. Try again after 5 minutes."
-      });
-    }
+//     const now = new Date();
 
-    // 🔹 GENERATE OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
+//     //  CHECK IF USER IS TEMPORARILY BLOCKED
+//     if (
+//       user.otpResendBlockedUntil &&
+//       user.otpResendBlockedUntil > now
+//     ) {
+//       const secondsLeft = Math.ceil(
+//         (user.otpResendBlockedUntil - now) / 1000
+//       );
 
-    user.emailOtp = otp;
-    user.otpExpiry = otpExpiry;
-    user.otpResendCount += 1;
+//       return res.status(429).json({
+//         message: `Too many attempts. Try again in ${secondsLeft}s`
+//       });
+//     }
 
-    await user.save();
+//     //  RESET COUNTER AFTER BLOCK PERIOD
+//     if (
+//       user.otpResendBlockedUntil &&
+//       user.otpResendBlockedUntil <= now
+//     ) {
+//       user.otpResendCount = 0;
+//       user.otpResendBlockedUntil = null;
+//     }
 
-    await sendEmail({
-      to: email,
-      subject: "Your OTP",
-      body: `
-        <h3>Email Verification</h3>
-        <p>Your OTP is:</p>
-        <h2>${otp}</h2>
-        <p>This OTP is valid for 1 minute.</p>
-      `
-    });
+//     //  CHECK ATTEMPT LIMIT
+//     if (user.otpResendCount >= 3) {
+//       user.otpResendBlockedUntil = new Date(
+//         now.getTime() + 5 * 60 * 1000 // 5 minutes
+//       );
+//       await user.save();
 
-    return res.json({
-      message: `OTP sent (${user.otpResendCount}/3)`
-    });
+//       return res.status(429).json({
+//         message: "Too many OTP requests. Try again after 5 minutes."
+//       });
+//     }
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Failed to resend OTP"
-    });
-  }
-};
+//     // 🔹 GENERATE OTP
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//     const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
+
+//     user.emailOtp = otp;
+//     user.otpExpiry = otpExpiry;
+//     user.otpResendCount += 1;
+
+//     await user.save();
+
+//     await sendEmail({
+//       to: email,
+//       subject: "Your OTP",
+//       body: `
+//         <h3>Email Verification</h3>
+//         <p>Your OTP is:</p>
+//         <h2>${otp}</h2>
+//         <p>This OTP is valid for 1 minute.</p>
+//       `
+//     });
+
+//     return res.json({
+//       message: `OTP sent (${user.otpResendCount}/3)`
+//     });
+
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       message: "Failed to resend OTP"
+//     });
+//   }
+// };
 
 
 export const login=async(req,res)=>{
