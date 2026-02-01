@@ -53,8 +53,8 @@ const Signup=()=>{
                 withCredentials:true
             })
             if(res.data.success){
-                // navigate("/login")
-                navigate("/verifyOtp", { state: { email: input.email } });
+                navigate("/login")
+                //navigate("/verifyOtp", { state: { email: input.email } });
                 toast.success(res.data.message)
             }
         }
